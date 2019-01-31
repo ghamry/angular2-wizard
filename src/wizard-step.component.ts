@@ -1,15 +1,17 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectorRef } from '@angular/core';
 
 @Component({
-  selector: 'wizard-step',
-  template:
-  `
-    <div [hidden]="!isActive">
-      <ng-content></ng-content>
-    </div>
+  selector: 'step',
+  template: `
+  <div [hidden]="!isActive" >
+  <ng-content></ng-content>
+  </div>  
   `
 })
-export class WizardStepComponent {
+
+export class StepComponent {
+
+  @Input('isActive')
   @Input() title: string;
   @Input() hidden: boolean = false;
   @Input() isValid: boolean = true;
@@ -23,16 +25,17 @@ export class WizardStepComponent {
   private _isActive: boolean = false;
   isDisabled: boolean = true;
 
-  constructor() { }
-
-  @Input('isActive')
   set isActive(isActive: boolean) {
     this._isActive = isActive;
     this.isDisabled = false;
+    this._changeDetectorRef.detectChanges(); // workaround for ISSUE https://github.com/angular/angular/issues/6005
   }
 
   get isActive(): boolean {
     return this._isActive;
   }
+
+
+  constructor(private _changeDetectorRef: ChangeDetectorRef) { }
 
 }
